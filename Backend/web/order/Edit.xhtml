@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditOrderTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditOrderLabel_id}" for="id" />
+                    <h:inputText id="id" value="#{orderController.selected.id}" title="#{bundle.EditOrderTitle_id}" />
+                    <h:outputLabel value="#{bundle.EditOrderLabel_customer}" for="customer" />
+                    <h:selectOneMenu id="customer" value="#{orderController.selected.customer}" title="#{bundle.EditOrderTitle_customer}" >
+                        <f:selectItems value="#{customerController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.EditOrderLabel_products}" for="products" />
+                    <h:inputText id="products" value="#{orderController.selected.products}" title="#{bundle.EditOrderTitle_products}" />
+                    <h:outputLabel value="#{bundle.EditOrderLabel_totalPrice}" for="totalPrice" />
+                    <h:inputText id="totalPrice" value="#{orderController.selected.totalPrice}" title="#{bundle.EditOrderTitle_totalPrice}" />
+                </h:panelGrid>
+                <h:commandLink action="#{orderController.update}" value="#{bundle.EditOrderSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditOrderViewLink}"/>
+                <br />
+                <h:commandLink action="#{orderController.prepareList}" value="#{bundle.EditOrderShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditOrderIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
