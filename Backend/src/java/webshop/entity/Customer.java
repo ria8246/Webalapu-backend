@@ -6,8 +6,14 @@
 package webshop.entity;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,17 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String email;
-
-    @Id
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
+    private String email;    
     private String name;
     private String password;
     private String address;
@@ -51,21 +47,32 @@ public class Customer implements Serializable {
     public Customer(String email, String name, String password, String address, Boolean newsletter, Boolean admin) {
         this.email = email;
         this.name = name;
-        this.password = password;
         this.address = address;
         this.newsletter = newsletter;
         this.admin = admin;
         this.orders = new ArrayList<>();
+        
+        setPassword(password);
     } 
     
     public Customer(String email, String name, String password, String address, Boolean newsletter) {
         this.email = email;
         this.name = name;
-        this.password = password;
         this.address = address;
         this.newsletter = newsletter;
         this.admin = false;
         this.orders = new ArrayList<>();
+        
+        setPassword(password);
+    }
+    
+    @Id
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
     
     public String getName() {
@@ -81,7 +88,15 @@ public class Customer implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        try {
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), new byte[]{13, 37}, 65536, 128);
+            SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = f.generateSecret(spec).getEncoded();
+            Base64.Encoder enc = Base64.getEncoder();
+            this.password = enc.encodeToString(hash);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            this.password = password;
+        } 
     }
 
     public String getAddress() {

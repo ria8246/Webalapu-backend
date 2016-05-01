@@ -35,7 +35,7 @@ public class RequestBean {
         try {
             Customer customer = em.find(Customer.class, email);
             if (customer == null) {
-                customer = new Customer(email, name, password, address, newsletter);
+                customer = new Customer(email, name, password, address, newsletter, admin);
                 em.persist(customer);
                 log.log(Level.INFO, "Customer " + customer.toString() + " persisted.");
             } else {
@@ -49,9 +49,9 @@ public class RequestBean {
     
     public void validateDefaults() {
         try {
-            Customer customer = em.find(Customer.class, "baricsz@gmail.com");
+            Customer customer = em.find(Customer.class, "admin@webshop.com");
             if (customer == null) {
-                customer = new Customer("baricsz@gmail.com", "Barics Zoltán", "test", "Pétfürdő", false, true);
+                customer = new Customer("admin@webshop.com", "Admin", "admin", "Omicron Persei 8", Boolean.FALSE, Boolean.TRUE);
                 em.persist(customer);
                 log.log(Level.INFO, "Customer " + customer.toString() + " persisted.");
             } else {
@@ -66,10 +66,9 @@ public class RequestBean {
             } else {
                 log.log(Level.INFO, "Product " + product.toString() + " already exists.");
             }
-            
-            Map<Product, Integer> products = new HashMap<>();
-            products.put(product, 2);
-            Order order = new Order(customer, products);
+
+            Order order = new Order(customer);
+            order.addProduct(product, 2);
             
             em.persist(order);
             log.log(Level.INFO, "Order created.");

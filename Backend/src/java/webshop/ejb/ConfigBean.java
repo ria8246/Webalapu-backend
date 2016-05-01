@@ -26,7 +26,7 @@ public class ConfigBean {
     
     @PostConstruct
     public void createData() {
-        request.createCustomer("baricsz@gmail.com", "Barics Zoltán", "test", "Omicron Persei 8", Boolean.FALSE, Boolean.TRUE);
+        request.createCustomer("baricsz@gmail.com", "Barics Zoltán", "test", "Pétfürdő", Boolean.FALSE, Boolean.TRUE);
         request.validateDefaults();
     }
     

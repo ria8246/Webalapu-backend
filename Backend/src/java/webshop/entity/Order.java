@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,14 +32,22 @@ public class Order implements Serializable {
     
     private Customer customer;
     private Map<Product, Integer> products;
+    private Long totalPrice;
 
     public Order() {
         this.products = new HashMap<>();
+        this.totalPrice = 0L;
+    }
+
+    public Order(Customer customer) {
+        this.customer = customer;
+        this.totalPrice = 0L;
     }
 
     public Order(Customer customer, Map<Product, Integer> products) {
         this.customer = customer;
         this.products = products;
+        this.totalPrice = 0L;
     }
     
     @Id
@@ -60,17 +69,41 @@ public class Order implements Serializable {
         this.customer = customer;
     }
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     public Map<Product, Integer> getProducts() {
         return products;
     }
-
+    
     public void setProducts(Map<Product, Integer> products) {
         this.products = products;
     }
     
+    public Boolean addProduct(Product product, Integer quantity) {
+        if (this.products == null) {
+            this.products = new HashMap<>();
+        }
+        
+        Integer stock = product.getStock();
+        stock -= quantity;
+        
+        if (stock < 0) {
+            return false;
+        }
+        
+        this.products.put(product, quantity);
+        this.totalPrice += product.getPrice() * quantity;
+        
+        product.setStock(stock);
+        
+        return true;
+    }
+
     public Long getTotalPrice() {
-        return 1L;
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Long totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     @Override
