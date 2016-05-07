@@ -1,0 +1,12 @@
+# Custom .gitignore file created by KRiSTóF
+
+# NetBeans files:
+Backend/nbproject/private/
+Backend/build/
+Backend/dist/
+Backend/build.xml
+Backend/manifest.mf
+
+# Crash logs:
+hs_err_pid*
+/Backend/nbproject/private/
