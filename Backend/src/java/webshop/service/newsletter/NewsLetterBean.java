@@ -28,6 +28,10 @@ public class NewsLetterBean implements NewsLetter
     @Resource (name = "mail/BackendSession")
     private Session session;
 
+    public NewsLetterBean ()
+    {
+    }
+
     @Override
     public void sendNewsLetter (EMailMessageInfo eMailMessageInfo)
     {
