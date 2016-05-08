@@ -6,6 +6,7 @@
 package webshop.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.ElementCollection;
@@ -33,15 +34,18 @@ public class Order implements Serializable {
     private Customer customer;
     private Map<Product, Integer> products;
     private Long totalPrice;
+    private Date orderDate;
 
     public Order() {
         this.products = new HashMap<>();
         this.totalPrice = 0L;
+        this.orderDate = new Date();
     }
 
     public Order(Customer customer) {
         this.customer = customer;
         this.totalPrice = 0L;
+        this.orderDate = new Date();
     }
 
     public Order(Customer customer, Map<Product, Integer> products) {

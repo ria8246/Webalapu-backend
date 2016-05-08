@@ -6,6 +6,7 @@
 package webshop.rest.api;
 
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import webshop.entity.Customer;
 import webshop.entity.Order;
+import webshop.entity.Product;
 import webshop.rest.auth.Secured;
 
 /**
@@ -47,7 +49,18 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
     public void create(Order entity, @Context SecurityContext securityContext) {
         super.getCustomer(securityContext);
         
-        super.create(entity);
+        Order order = new Order();
+        Customer customer = em.find(Customer.class, entity.getCustomer().getEmail());
+        order.setCustomer(customer);
+        
+        for (Map.Entry<Product, Integer> entry: entity.getProducts().entrySet()) {
+            Product product = em.find(Product.class, entry.getKey().getId());
+            order.addProduct(product, entry.getValue());
+        }
+        
+        if (order.getProducts().size() > 0) {
+            super.create(order);
+        }
     }
 
     @Secured
@@ -78,7 +91,19 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
     @Produces({MediaType.APPLICATION_XML})
     public List<Order> findAll(@Context SecurityContext securityContext) {
         Customer authed = super.getCustomer(securityContext);
-        return (List<Order>) authed.getOrders();
+        
+        List<Order> orders = (List<Order>) authed.getOrders();
+        
+        for (Order order : orders) {
+            Customer customer = order.getCustomer();
+            em.detach(customer);
+            
+            customer.setPassword(null);
+            customer.setSalt(null);
+            customer.setToken(null);
+        }
+        
+        return orders;
     }
     
     @Secured
@@ -88,7 +113,18 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
     public List<Order> findAllAdmin(@Context SecurityContext securityContext) {
         super.checkAdmin(super.getCustomer(securityContext));
         
-        return super.findAll();
+        List<Order> orders = super.findAll();
+        
+        for (Order order : orders) {
+            Customer customer = order.getCustomer();
+            em.detach(customer);
+            
+            customer.setPassword(null);
+            customer.setSalt(null);
+            customer.setToken(null);
+        }
+        
+        return orders;
     }
 
     @Override

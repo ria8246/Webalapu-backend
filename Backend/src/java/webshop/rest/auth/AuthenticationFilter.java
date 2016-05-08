@@ -81,6 +81,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
             requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED).build());
         }
