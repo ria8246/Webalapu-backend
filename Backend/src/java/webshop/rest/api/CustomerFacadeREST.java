@@ -7,14 +7,12 @@ package webshop.rest.api;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -48,8 +46,9 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML})
-    public void create(Customer entity) {
-        super.create(entity);
+    public void create(Customer entity) {        
+        Customer customer = new Customer(entity.getEmail(), entity.getName(), entity.getPassword(), entity.getAddress(), entity.getNewsletter());
+        super.create(customer);
     }
 
     @Secured
@@ -65,6 +64,7 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
         Boolean admin = entity.getAdmin();
         String name = entity.getName();
         Boolean newsletter = entity.getNewsletter();
+        String password = entity.getPassword();
         
         if (address != null) {
             customer.setAddress(address);
@@ -80,6 +80,10 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
         
         if (newsletter != null) {
             customer.setNewsletter(newsletter);
+        }
+        
+        if (password != null) {
+            customer.setPassword(password);
         }
         
         super.edit(customer);
@@ -112,17 +116,32 @@ public class CustomerFacadeREST extends AbstractFacade<Customer> {
         Customer customer = em.find(Customer.class, id);
         super.checkPermission(authed, customer);
         
-        return super.find(id);
+        em.detach(customer);
+        customer.setPassword(null);
+        customer.setSalt(null);
+        customer.setToken(null);
+        
+        return customer;
     }
 
     @Secured
     @GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public List<Customer> findAll(@Context SecurityContext securityContext) {
         Customer authed = super.getCustomer(securityContext);
         super.checkAdmin(authed);
+
+        List<Customer> customers = super.findAll();
         
-        return super.findAll();
+        for (Customer customer : customers) {
+            em.detach(customer);
+            
+            customer.setPassword(null);
+            customer.setSalt(null);
+            customer.setToken(null);
+        }        
+        
+        return customers;
     }
 
     @Override
