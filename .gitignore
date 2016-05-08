@@ -9,4 +9,9 @@ Backend/manifest.mf
 
 # Crash logs:
 hs_err_pid*
-/Backend/nbproject/private/
+
+nbproject/private/
+build/
+dist/
+build.xml
+manifest.mf

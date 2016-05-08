@@ -5,17 +5,26 @@
  */
 package webshop.entity;
 
+import com.sun.istack.logging.Logger;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Random;
+import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.persistence.Basic;
 import static javax.persistence.CascadeType.ALL;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -34,9 +43,11 @@ public class Customer implements Serializable {
     private String email;    
     private String name;
     private String password;
+    private String salt;
     private String address;
     private Boolean newsletter;
     private Boolean admin;
+    private String token;
     
     private Collection<Order> orders;
 
@@ -52,7 +63,7 @@ public class Customer implements Serializable {
         this.admin = admin;
         this.orders = new ArrayList<>();
         
-        setPassword(password);
+        setPassword(password, true);
     } 
     
     public Customer(String email, String name, String password, String address, Boolean newsletter) {
@@ -63,7 +74,7 @@ public class Customer implements Serializable {
         this.admin = false;
         this.orders = new ArrayList<>();
         
-        setPassword(password);
+        setPassword(password, true);
     }
     
     @Id
@@ -83,22 +94,61 @@ public class Customer implements Serializable {
         this.name = name;
     }
 
+    @Basic(fetch=FetchType.LAZY)
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        try {
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), new byte[]{13, 37}, 65536, 128);
-            SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            byte[] hash = f.generateSecret(spec).getEncoded();
-            Base64.Encoder enc = Base64.getEncoder();
-            this.password = enc.encodeToString(hash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+    public void setPassword(String password, Boolean hash) {
+        hash = (hash == null) ? false : hash;
+        if (hash) {
+            try {
+                byte[] salt = new byte[32];
+                new SecureRandom().nextBytes(salt);
+
+                SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+                PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 32, 256);
+
+                Base64.Encoder enc = Base64.getEncoder();
+                this.password = enc.encodeToString(skf.generateSecret(spec).getEncoded());
+                this.salt = enc.encodeToString(salt);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                this.password = password;
+            } 
+        } else {
             this.password = password;
+        }
+    }
+    
+    public void setPassword(String password) {
+        setPassword(password, Boolean.FALSE);
+    }
+    
+    public Boolean checkPassword(String password) {
+        try {
+            byte[] salt = Base64.getDecoder().decode(this.salt);
+
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 32, 256);
+            SecretKey key = skf.generateSecret(spec);
+            
+            if (Arrays.equals(key.getEncoded(), Base64.getDecoder().decode(this.password))) {
+                return Boolean.TRUE;
+            }
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            
         } 
+        return Boolean.FALSE;
     }
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+    
     public String getAddress() {
         return address;
     }
@@ -130,6 +180,14 @@ public class Customer implements Serializable {
 
     public void setOrders(Collection<Order> orders) {
         this.orders = orders;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

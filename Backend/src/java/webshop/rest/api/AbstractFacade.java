@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webshop.rest.service;
+package webshop.rest.api;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.core.SecurityContext;
+import webshop.entity.Customer;
 
 /**
  *
@@ -61,4 +64,19 @@ public abstract class AbstractFacade<T> {
         return ((Long) q.getSingleResult()).intValue();
     }
     
+    protected Customer getCustomer(SecurityContext securityContext) {
+        return getEntityManager().find(Customer.class, securityContext.getUserPrincipal().getName());
+    }
+    
+    protected void checkPermission(Customer user, Customer customer) {
+        if (!user.getAdmin() && !user.equals(customer)) {
+           throw new NotAuthorizedException("Permission denied.");
+        }
+    }
+    
+    protected void checkAdmin(Customer user) {
+        if (!user.getAdmin()) {
+            throw new NotAuthorizedException("Permission denied.");
+        }
+    }
 }

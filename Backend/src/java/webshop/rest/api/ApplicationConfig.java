@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webshop.rest.service;
+package webshop.rest.api;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.Application;
  *
  * @author iostream
  */
-@javax.ws.rs.ApplicationPath("webresources")
+@javax.ws.rs.ApplicationPath("rest")
 public class ApplicationConfig extends Application {
 
     @Override
@@ -29,9 +29,11 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(webshop.rest.service.CustomerFacadeREST.class);
-        resources.add(webshop.rest.service.OrderFacadeREST.class);
-        resources.add(webshop.rest.service.ProductFacadeREST.class);
+        resources.add(webshop.rest.api.CustomerFacadeREST.class);
+        resources.add(webshop.rest.api.OrderFacadeREST.class);
+        resources.add(webshop.rest.api.ProductFacadeREST.class);
+        resources.add(webshop.rest.auth.AuthenticationEndpoint.class);
+        resources.add(webshop.rest.auth.AuthenticationFilter.class);
     }
     
 }
