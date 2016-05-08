@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import javax.annotation.Priority;
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -33,7 +32,6 @@ import webshop.entity.Customer;
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-@Stateless
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     @PersistenceContext(unitName = "BackendPU")
