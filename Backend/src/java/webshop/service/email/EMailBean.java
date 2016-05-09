@@ -5,11 +5,13 @@
  */
 package webshop.service.email;
 
+import java.util.Properties;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -41,6 +43,22 @@ public class EMailBean
 	String subject = eMailMessageInfo.getSubject ();
 	String emailMessage = eMailMessageInfo.getMessage ();
 
+	/*
+	String username = KristofData.getUsername ();
+	String password = KristofData.getPassword ();
+	Properties properties = new Properties ();
+	properties.setProperty ("mail.smtp.host", "smtp.gmail.com");
+	properties.setProperty ("mail.smtp.port", "465");
+	properties.setProperty ("mail.smtp.user", username);
+	properties.setProperty ("mail.smtp.password", password);
+	properties.setProperty ("mail.smtp.auth", "true");
+	properties.setProperty ("mail.smtp.socketFactory.port", "465");
+	properties.setProperty ("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
+	Authenticator authenticator = new GMailAuthenticator (username, password);
+	Session session = Session.getInstance (properties, authenticator);
+
+	*/
 	try
 	{
 	    MimeMessage mimeMessage = new MimeMessage (session);
@@ -56,7 +74,7 @@ public class EMailBean
 	catch (MessagingException me)
 	{
 	    me.printStackTrace ();
-	    logger.info ("Error in ConfirmerBean for " + recipient);
+	    logger.info ("Error in EmailBean for " + recipient);
 	}
 
 	return;

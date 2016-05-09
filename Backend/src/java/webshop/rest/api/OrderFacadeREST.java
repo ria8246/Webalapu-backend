@@ -5,7 +5,7 @@
  */
 package webshop.rest.api;
 
-import com.sun.istack.internal.logging.Logger;
+
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -97,7 +97,7 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
     public List<Order> findAll(@Context SecurityContext securityContext) {
         Customer authed = super.getCustomer(securityContext);
         
-        Logger.getLogger(OrderFacadeREST.class).info(authed.getEmail());
+      
         
         //List<Order> orders = (List<Order>) authed.getOrders();
         
@@ -112,7 +112,7 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
         List<Order> orders = (List)typedQuery.getResultList();
         
         
-        Logger.getLogger(OrderFacadeREST.class).info("" + orders.size());
+       
         
         for (Order order : orders) {
             Customer customer = order.getCustomer();

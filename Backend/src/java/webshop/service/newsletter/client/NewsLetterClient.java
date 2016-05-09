@@ -23,7 +23,7 @@ public class NewsLetterClient
 
     @EJB
     private static NewsLetter newsletter;
-    
+
     @EJB
     private static EMailBean eMailBean;
 
@@ -43,8 +43,8 @@ public class NewsLetterClient
 	{
 	    EMailMessageInfo current = listIterator.next ();
 	    // newsletter.sendNewsLetter (current);
-	    
-	    // eMailBean.sendEmail (current); // Uncomment to send e-mails
+
+	    eMailBean.sendEmail (current); // Uncomment to send e-mails
 	}
 
 	return;
@@ -66,7 +66,10 @@ public class NewsLetterClient
 
 	// Add recipients like this:
 	// messageInfoItems.add (new EMailMessageInfo ("VALID EMAIL ADDRESS", subject, text));
-	
+	messageInfoItems.add (new EMailMessageInfo ("ria8246@gmail.com", subject, text));
+	messageInfoItems.add (new EMailMessageInfo ("sipczi@gmail.com", subject, text));
+	messageInfoItems.add (new EMailMessageInfo ("baricsz@gmail.com", subject, text));
+	messageInfoItems.add (new EMailMessageInfo ("zeppelin.hindenburg@postino.hu", subject, text));
 
 	return messageInfoItems;
     }

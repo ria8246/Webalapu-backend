@@ -53,7 +53,7 @@ public class NewsLetterBean implements NewsLetter
 	catch (MessagingException me)
 	{
 	    me.printStackTrace ();
-	    logger.info ("Error in ConfirmerBean for " + recipient);
+	    logger.info ("Error in NewsLetterBean for " + recipient);
 	}
 
 	return;

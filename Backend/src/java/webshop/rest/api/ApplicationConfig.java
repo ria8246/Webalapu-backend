@@ -33,7 +33,7 @@ public class ApplicationConfig extends Application {
         resources.add(webshop.rest.api.OrderFacadeREST.class);
         resources.add(webshop.rest.api.ProductFacadeREST.class);
         resources.add(webshop.rest.auth.AuthenticationEndpoint.class);
-        resources.add(webshop.rest.auth.AuthenticationFilter.class);
+	resources.add (webshop.rest.auth.AuthenticationFilter.class);
     }
     
 }
