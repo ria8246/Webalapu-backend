@@ -5,11 +5,16 @@
  */
 package webshop.rest.api;
 
+import com.sun.istack.internal.logging.Logger;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -92,7 +97,22 @@ public class OrderFacadeREST extends AbstractFacade<Order> {
     public List<Order> findAll(@Context SecurityContext securityContext) {
         Customer authed = super.getCustomer(securityContext);
         
-        List<Order> orders = (List<Order>) authed.getOrders();
+        Logger.getLogger(OrderFacadeREST.class).info(authed.getEmail());
+        
+        //List<Order> orders = (List<Order>) authed.getOrders();
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Object> criteriaQuery = cb.createQuery();
+
+        Root<Order> from = criteriaQuery.from(Order.class);        
+        CriteriaQuery<Object> select = criteriaQuery.select(from);
+
+        select.where(cb.equal(from.get("customer"), authed));
+        TypedQuery<Object> typedQuery = em.createQuery(select);
+        List<Order> orders = (List)typedQuery.getResultList();
+        
+        
+        Logger.getLogger(OrderFacadeREST.class).info("" + orders.size());
         
         for (Order order : orders) {
             Customer customer = order.getCustomer();

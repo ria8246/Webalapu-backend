@@ -34,7 +34,7 @@ public class RequestBean {
     public void validateDefaults() {
         try {
             persistCustomer("admin@webshop.com", "Admin", "admin", "Omicron Persei 8", Boolean.FALSE, Boolean.TRUE);
-            Customer customer = persistCustomer("user@webshop.com", "User", "user", "Omicron Persei 8", Boolean.FALSE, Boolean.TRUE);
+            Customer customer = persistCustomer("user@webshop.com", "User", "user", "Omicron Persei 8", Boolean.TRUE, Boolean.FALSE);
 
             persistProduct("Aigisz", 2000000, "Győzelemre segít e pajzs, ha Athene is úgy akarja. Szoborkert készítésére is alkalmas.", "images/1.jpg", 1);
             Product product = persistProduct("Álomdoboz", 599999, "Álmatlanságban szenved? E ládika segíthet. Utána felkelni nehézkes.", "images/2.jpg", 5);
