@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,24 +31,26 @@ public class Product implements Serializable {
     private String name;
     private Integer price;
     private String description;
-    //private String image;
-    private Integer stock;    
+    private String image;
+    private Integer stock;
 
     public Product() {
     }
 
-    public Product(Long id, String name, Integer price, String description, Integer stock) {
+    public Product(Long id, String name, Integer price, String description, String image, Integer stock) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.image = image;
         this.stock = stock;
     }
     
-    public Product(String name, Integer price, String description, Integer stock) {
+    public Product(String name, Integer price, String description, String image, Integer stock) {
         this.name = name;
         this.price = price;
         this.description = description;
+        this.image = image;
         this.stock = stock;
     } 
     
@@ -81,6 +84,14 @@ public class Product implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Integer getStock() {
